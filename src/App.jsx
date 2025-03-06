@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 
 const stories = [
@@ -15,7 +15,60 @@ const stories = [
   { text: "The Day Everything Went Backward", color: "#FF5733" },
 ];
 
+const storyTitles = stories.map(story => story.text);
+
 const MadLibs = () => {
+  const [form, setForm] = useState({
+    topic: "",
+    verb: "",
+    noun: "",
+    adjective: "",
+    place: "",
+    emotion: "",
+    name: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const validateField = (name, value) => {
+    let error = "";
+
+    if (!value.trim()) {
+      error = "Required field";
+    } else {
+      switch (name) {
+        case "topic":
+          if (!storyTitles.includes(value)) error = "Invalid topic selection";
+          break;
+        case "verb":
+        case "noun":
+        case "adjective":
+        case "place":
+        case "name":
+          if (value.length < 3 || value.length > 20) error = "Must be 3-20 characters";
+          break;
+        case "emotion":
+          if (value.length < 3 || value.length > 15) error = "Must be 3-15 characters";
+          break;
+        default:
+          break;
+      }
+    }
+
+    return error;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    // Validate the field immediately on change
+    setErrors({ ...errors, [name]: validateField(name, value) });
+  };
+
+  const isFormValid = Object.values(errors).every((error) => error === "") &&
+                      Object.values(form).every((value) => value.trim() !== "");
+
   return (
     <div className="container">
       <h1 className="title">Mad Libs!</h1>
@@ -26,6 +79,7 @@ const MadLibs = () => {
             key={index}
             className="story-button"
             style={{ backgroundColor: story.color }}
+            onClick={() => setForm({ ...form, topic: story.text })}
           >
             {story.text.toUpperCase()}
           </button>
@@ -35,14 +89,23 @@ const MadLibs = () => {
       <div className="input-section">
         <h3 className="input-title">Go Mad! Fill in the Blank Fields Below</h3>
         <div className="input-grid">
-          <input className="input-field" type="text" placeholder="Enter a verb" />
-          <input className="input-field" type="text" placeholder="Enter a noun" />
-          <input className="input-field" type="text" placeholder="Enter an adjective" />
-          <input className="input-field" type="text" placeholder="Enter a place" />
-          <input className="input-field" type="text" placeholder="Enter an emotion" />
-          <input className="input-field" type="text" placeholder="Enter a name" />
+          {Object.keys(form).map((key, index) => (
+            <div key={index} className="input-wrapper">
+              <input
+                className="input-field"
+                type="text"
+                name={key}
+                placeholder={`Enter a ${key}`}
+                value={form[key]}
+                onChange={handleChange}
+              />
+              {errors[key] && <span className="error-message">{errors[key]}</span>}
+            </div>
+          ))}
         </div>
-        <button className="create-button">Create!</button>
+        <button className="create-button" disabled={!isFormValid}>
+          Create!
+        </button>
       </div>
     </div>
   );
