@@ -128,3 +128,34 @@
   font-weight: bold;
 }
 
+.result {
+  background-color: #a833ff;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.generated-text {
+  font-size: 1.2rem;
+}
+
+.highlight {
+  background-color: white;
+  color: black;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-weight: bold;
+  display: inline-block;
+  margin: 2px;
+}
+
+.try-again-button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
